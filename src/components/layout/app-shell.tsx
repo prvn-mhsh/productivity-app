@@ -96,7 +96,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar>
           <SidebarHeader className="p-4">
             <div className="flex items-center gap-3">
-              <SidebarTrigger className="flex"/>
               <Avatar>
                 <AvatarFallback className="bg-primary text-primary-foreground font-bold text-lg">PA</AvatarFallback>
               </Avatar>
@@ -147,6 +146,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SidebarInset>
           <header className="flex items-center justify-between h-16 px-4 border-b shrink-0">
             <div className="flex items-center gap-2">
+                <SidebarTrigger className="flex"/>
                 <h1 className="text-lg font-semibold md:text-xl">
                     {pathname === '/' && 'Budget'}
                     {pathname === '/reminders' && 'Reminders'}
