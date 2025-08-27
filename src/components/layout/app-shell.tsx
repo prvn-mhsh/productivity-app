@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, Settings, PlusCircle, PiggyBank, Bell, StickyNote } from 'lucide-react';
+import { LayoutDashboard, Settings, PlusCircle, PiggyBank, Bell, StickyNote, FolderArchive } from 'lucide-react';
 import React from 'react';
 import Link from 'next/link';
 import { AddTransactionDialog } from '../add-transaction-dialog';
@@ -74,6 +74,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link href="/notes">
                     <StickyNote />
                     Notes
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/documents'}>
+                  <Link href="/documents">
+                    <FolderArchive />
+                    Documents
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
