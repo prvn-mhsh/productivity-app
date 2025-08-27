@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, Edit, Trash2, StickyNote } from 'lucide-react';
+import { Edit, Trash2, StickyNote } from 'lucide-react';
 import type { Note } from '@/lib/types';
 
 const noteSchema = z.object({
@@ -34,10 +34,16 @@ const noteSchema = z.object({
 
 type NoteFormValues = z.infer<typeof noteSchema>;
 
-function NotesPage() {
+interface NotesPageProps {
+  isFormOpen: boolean;
+  onFormOpenChange: (open: boolean) => void;
+  onNoteCreate: () => void;
+}
+
+
+function NotesPage({ isFormOpen, onFormOpenChange, onNoteCreate }: NotesPageProps) {
   const { notes, addNote, updateNote, deleteNote, loading } = useBudgetData();
   const { toast } = useToast();
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
 
   const form = useForm<NoteFormValues>({
@@ -55,8 +61,13 @@ function NotesPage() {
     } else {
       form.reset({ title: '', content: '' });
     }
-    setIsFormOpen(true);
+    onFormOpenChange(true);
   };
+
+  const handleCloseForm = () => {
+    onFormOpenChange(false);
+    setEditingNote(null);
+  }
 
   const onSubmit = (values: NoteFormValues) => {
     if (editingNote) {
@@ -66,8 +77,7 @@ function NotesPage() {
       addNote(values);
       toast({ title: 'Note Created', description: 'Your new note has been saved.' });
     }
-    setIsFormOpen(false);
-    setEditingNote(null);
+    handleCloseForm();
   };
 
   const handleDelete = (noteId: string) => {
@@ -82,10 +92,6 @@ function NotesPage() {
           <h1 className="text-3xl font-bold">Notes</h1>
           <p className="text-muted-foreground">Create, edit, and delete short textual notes.</p>
         </div>
-        <Button onClick={() => handleOpenForm()}>
-          <PlusCircle className="mr-2" />
-          Create Note
-        </Button>
       </div>
 
       {loading ? (
@@ -135,7 +141,7 @@ function NotesPage() {
         </div>
       )}
 
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+      <Dialog open={isFormOpen} onOpenChange={handleCloseForm}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingNote ? 'Edit Note' : 'Create Note'}</DialogTitle>
@@ -170,7 +176,7 @@ function NotesPage() {
               />
               <DialogFooter>
                 <DialogClose asChild>
-                    <Button type="button" variant="ghost">Cancel</Button>
+                    <Button type="button" variant="ghost" onClick={handleCloseForm}>Cancel</Button>
                 </DialogClose>
                 <Button type="submit">{editingNote ? 'Save Changes' : 'Create'}</Button>
               </DialogFooter>

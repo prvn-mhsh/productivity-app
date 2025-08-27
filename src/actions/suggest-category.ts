@@ -23,7 +23,7 @@ export async function suggestCategoryAction(description: string): Promise<string
     }
 
     return null;
-  } catch (error) {
+  } catch (error){
     console.error('Error suggesting category:', error);
     // In a production app, you might want to log this to a service
     return null;

@@ -15,11 +15,10 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, Settings, PlusCircle, Bell, StickyNote, FolderArchive } from 'lucide-react';
+import { LayoutDashboard, Settings, PlusCircle, Bell, StickyNote, FolderArchive, Upload } from 'lucide-react';
 import React from 'react';
 import Link from 'next/link';
 import { AddTransactionDialog } from '../add-transaction-dialog';
-import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Sheet,
   SheetContent,
@@ -28,18 +27,68 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { usePathname } from 'next/navigation';
+import { useIsMobile } from '@/hooks/use-mobile';
+import NotesPage from '@/app/notes/page';
+import RemindersPage from '@/app/reminders/page';
+
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const isMobile = useIsMobile();
+  const [isAddTransactionOpen, setAddTransactionOpen] = React.useState(false);
+  const [isNoteFormOpen, setNoteFormOpen] = React.useState(false);
+  const [isReminderFormOpen, setReminderFormOpen] = React.useState(false);
+
   const pathname = usePathname();
+  const isMobile = useIsMobile();
   
-  const addTransactionButton = (
-     <Button size="lg" className="w-full" onClick={() => setIsDialogOpen(true)}>
-        <PlusCircle className="mr-2" />
-        Add Transaction
-      </Button>
-  );
+  const handleCreateNote = () => {
+    setNoteFormOpen(true);
+  };
+
+  const getHeaderActions = () => {
+    switch (pathname) {
+      case '/':
+        return (
+          <Button onClick={() => setAddTransactionOpen(true)} size={isMobile ? 'icon' : 'default'}>
+            <PlusCircle />
+            <span className="sr-only sm:not-sr-only sm:ml-2">Add Transaction</span>
+          </Button>
+        );
+      case '/notes':
+        return (
+            <Button onClick={() => setNoteFormOpen(true)} size={isMobile ? 'icon' : 'default'}>
+                <PlusCircle />
+                <span className="sr-only sm:not-sr-only sm:ml-2">New Note</span>
+            </Button>
+        );
+      case '/reminders':
+        return (
+            <Button onClick={() => setReminderFormOpen(true)} size={isMobile ? 'icon' : 'default'}>
+                <PlusCircle />
+                <span className="sr-only sm:not-sr-only sm:ml-2">New Reminder</span>
+            </Button>
+        );
+      case '/documents':
+         return (
+            <Button>
+                <Upload />
+                <span className="sr-only sm:not-sr-only sm:ml-2">Upload File</span>
+            </Button>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderPageContent = () => {
+    if (pathname === '/notes') {
+      return <NotesPage isFormOpen={isNoteFormOpen} onFormOpenChange={setNoteFormOpen} onNoteCreate={handleCreateNote} />;
+    }
+    if (pathname === '/reminders') {
+        return <RemindersPage isFormOpen={isReminderFormOpen} onFormOpenChange={setReminderFormOpen} />
+    }
+    return children;
+  }
+
 
   return (
     <SidebarProvider>
@@ -90,14 +139,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter className="p-4">
-             {pathname === '/' && addTransactionButton}
+             {/* Footer can be used for other things if needed */}
           </SidebarFooter>
         </Sidebar>
 
         <SidebarInset>
-          <header className="flex items-center justify-between h-16 px-4 border-b shrink-0 md:justify-end">
+          <header className="flex items-center justify-between h-16 px-4 border-b shrink-0">
             <SidebarTrigger className="md:hidden" />
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 ml-auto">
+               {getHeaderActions()}
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon">
@@ -121,11 +171,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </header>
           <main className="flex-1 p-4 overflow-auto lg:p-6">
-            {children}
+            {renderPageContent()}
           </main>
         </SidebarInset>
       </div>
-      <AddTransactionDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
+      <AddTransactionDialog open={isAddTransactionOpen} onOpenChange={setAddTransactionOpen} />
     </SidebarProvider>
   );
 }
