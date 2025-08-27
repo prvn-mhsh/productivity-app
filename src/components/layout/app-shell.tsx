@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -14,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, Settings, PlusCircle, PiggyBank } from 'lucide-react';
+import { LayoutDashboard, Settings, PlusCircle, PiggyBank, Bell } from 'lucide-react';
 import React from 'react';
 import Link from 'next/link';
 import { AddTransactionDialog } from '../add-transaction-dialog';
@@ -26,10 +27,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { usePathname } from 'next/navigation';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const isMobile = useIsMobile();
+  const pathname = usePathname();
   
   const addTransactionButton = (
      <Button size="lg" className="w-full" onClick={() => setIsDialogOpen(true)}>
@@ -45,23 +48,31 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <SidebarHeader className="p-4">
             <div className="flex items-center gap-2">
               <PiggyBank className="w-8 h-8 text-primary" />
-              <span className="text-xl font-semibold">ClarityBudgets</span>
+              <span className="text-xl font-semibold">Clarity</span>
             </div>
           </SidebarHeader>
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive>
+                <SidebarMenuButton asChild isActive={pathname === '/'}>
                   <Link href="/">
                     <LayoutDashboard />
-                    Dashboard
+                    Budget
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/reminders'}>
+                  <Link href="/reminders">
+                    <Bell />
+                    Reminders
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter className="p-4">
-             {addTransactionButton}
+             {pathname === '/' && addTransactionButton}
           </SidebarFooter>
         </Sidebar>
 

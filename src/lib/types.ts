@@ -1,3 +1,4 @@
+
 import type { LucideProps } from 'lucide-react';
 import type React from 'react';
 
@@ -26,4 +27,10 @@ export type Spending = {
   spent: number;
   budget: number;
   color: string;
+};
+
+export type Reminder = {
+  id: string;
+  title: string;
+  eventTime: string; // ISO string
 };
