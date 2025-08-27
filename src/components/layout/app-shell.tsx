@@ -145,7 +145,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <SidebarInset>
           <header className="flex items-center justify-between h-16 px-4 border-b shrink-0">
-            <SidebarTrigger className="md:hidden" />
+            <div className="flex items-center gap-2">
+                <SidebarTrigger />
+                <h1 className="text-lg font-semibold md:text-xl">
+                    {pathname === '/' && 'Budget'}
+                    {pathname === '/reminders' && 'Reminders'}
+                    {pathname === '/notes' && 'Notes'}
+                    {pathname === '/documents' && 'Documents'}
+                </h1>
+            </div>
             <div className="flex items-center gap-4 ml-auto">
                {getHeaderActions()}
               <Sheet>
