@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Productivity App',
+  title: 'Productivity Assistant',
   description: 'A productivity app with budgeting, reminders, and notes.',
 };
 

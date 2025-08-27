@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, Settings, PlusCircle, PiggyBank, Bell, StickyNote, FolderArchive } from 'lucide-react';
+import { LayoutDashboard, Settings, PlusCircle, Bell, StickyNote, FolderArchive } from 'lucide-react';
 import React from 'react';
 import Link from 'next/link';
 import { AddTransactionDialog } from '../add-transaction-dialog';
@@ -46,9 +46,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-screen bg-background">
         <Sidebar>
           <SidebarHeader className="p-4">
-            <div className="flex items-center gap-2">
-              <PiggyBank className="w-8 h-8 text-primary" />
-              <span className="text-xl font-semibold">Productivity</span>
+            <div className="flex items-center gap-3">
+              <Avatar>
+                <AvatarFallback className="bg-primary text-primary-foreground font-bold text-lg">PA</AvatarFallback>
+              </Avatar>
+              <span className="text-xl font-semibold">Productivity Assistant</span>
             </div>
           </SidebarHeader>
           <SidebarContent>
