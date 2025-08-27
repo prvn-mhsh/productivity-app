@@ -34,3 +34,9 @@ export type Reminder = {
   title: string;
   eventTime: string; // ISO string
 };
+
+export type Note = {
+    id: string;
+    title: string;
+    content: string;
+};

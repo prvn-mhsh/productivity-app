@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, Settings, PlusCircle, PiggyBank, Bell } from 'lucide-react';
+import { LayoutDashboard, Settings, PlusCircle, PiggyBank, Bell, StickyNote } from 'lucide-react';
 import React from 'react';
 import Link from 'next/link';
 import { AddTransactionDialog } from '../add-transaction-dialog';
@@ -48,7 +48,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <SidebarHeader className="p-4">
             <div className="flex items-center gap-2">
               <PiggyBank className="w-8 h-8 text-primary" />
-              <span className="text-xl font-semibold">Clarity</span>
+              <span className="text-xl font-semibold">Productivity</span>
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -66,6 +66,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link href="/reminders">
                     <Bell />
                     Reminders
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/notes'}>
+                  <Link href="/notes">
+                    <StickyNote />
+                    Notes
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

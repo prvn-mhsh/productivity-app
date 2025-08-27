@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'ClarityBudgets',
-  description: 'A budgeting and expense tracking app with spending categories, charts and budget goals.',
+  title: 'Productivity App',
+  description: 'A productivity app with budgeting, reminders, and notes.',
 };
 
 export default function RootLayout({
