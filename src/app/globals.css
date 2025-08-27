@@ -85,3 +85,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    perspective: 1000px;
+  }
+  .card:hover {
+    transform: translateY(-5px) rotateX(2deg) rotateY(1deg);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.15);
+  }
+
+  .btn {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  .btn:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1) inset;
+  }
+}
