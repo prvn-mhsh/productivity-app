@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="font-body antialiased h-full">
+      <body className="font-sans antialiased h-full">
         <BudgetProvider>
           <AppShell>{children}</AppShell>
         </BudgetProvider>

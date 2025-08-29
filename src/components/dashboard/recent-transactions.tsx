@@ -36,12 +36,14 @@ import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
 import { useBudgetData } from '@/hooks/use-budget-data';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
+  showViewAll?: boolean;
 }
 
-export function RecentTransactions({ transactions }: RecentTransactionsProps) {
+export function RecentTransactions({ transactions, showViewAll = false }: RecentTransactionsProps) {
   const { deleteTransaction } = useBudgetData();
   const { toast } = useToast();
   const getCategory = (id: string) => CATEGORIES.find(c => c.id === id);
@@ -56,19 +58,18 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="relative">
         <CardTitle>Recent Transactions</CardTitle>
-        <CardDescription>Your last 5 transactions.</CardDescription>
+        {showViewAll && <Button variant="link" className="p-0 h-auto absolute top-6 right-4" asChild><Link href="/budget">View All</Link></Button>}
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Description</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead className='hidden sm:table-cell'>Category</TableHead>
               <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right sr-only">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -77,11 +78,13 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
                 const category = getCategory(t.categoryId);
                 return (
                   <TableRow key={t.id}>
-                    <TableCell className="font-medium">{t.description}</TableCell>
-                    <TableCell>
+                    <TableCell className="font-medium">
+                        <div>{t.description}</div>
+                        <div className="text-xs text-muted-foreground sm:hidden">{category?.name}</div>
+                    </TableCell>
+                    <TableCell className='hidden sm:table-cell'>
                       {category && <Badge variant="outline">{category.name}</Badge>}
                     </TableCell>
-                    <TableCell>{format(new Date(t.date), 'MMM dd, yyyy')}</TableCell>
                     <TableCell className="text-right">
                       ₹{t.amount.toFixed(2)}
                     </TableCell>

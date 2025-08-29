@@ -1,36 +1,34 @@
 
 'use client';
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarFooter,
-} from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, Settings, PlusCircle, Bell, StickyNote, FolderArchive, Upload } from 'lucide-react';
 import React from 'react';
 import Link from 'next/link';
-import { AddTransactionDialog } from '../add-transaction-dialog';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 import { usePathname } from 'next/navigation';
+import {
+  LayoutDashboard,
+  Bell,
+  StickyNote,
+  FolderArchive,
+  PlusCircle,
+  Plus,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { AddTransactionDialog } from '../add-transaction-dialog';
 import { useIsMobile } from '@/hooks/use-mobile';
 import NotesPage from '@/app/notes/page';
 import RemindersPage from '@/app/reminders/page';
+import BudgetPage from '@/app/budget/page';
+import DocumentsPage from '@/app/documents/page';
+import { DashboardPage } from '../dashboard/dashboard-page';
 
+const navItems = [
+  { href: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/budget', icon: LayoutDashboard, label: 'Budget' },
+  { href: '/reminders', icon: Bell, label: 'Reminders' },
+  { href: '/notes', icon: StickyNote, label: 'Notes' },
+  { href: '/documents', icon: FolderArchive, label: 'Documents' },
+];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isAddTransactionOpen, setAddTransactionOpen] = React.useState(false);
@@ -39,153 +37,87 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
   const isMobile = useIsMobile();
-  
-  const handleCreateNote = () => {
-    setNoteFormOpen(true);
-  };
 
-  const getHeaderActions = () => {
-    switch (pathname) {
-      case '/':
-        return (
-          <Button onClick={() => setAddTransactionOpen(true)} size={isMobile ? 'icon' : 'default'}>
-            <PlusCircle />
-            <span className="sr-only sm:not-sr-only sm:ml-2">Add Transaction</span>
-          </Button>
-        );
-      case '/notes':
-        return (
-            <Button onClick={() => setNoteFormOpen(true)} size={isMobile ? 'icon' : 'default'}>
-                <PlusCircle />
-                <span className="sr-only sm:not-sr-only sm:ml-2">New Note</span>
-            </Button>
-        );
-      case '/reminders':
-        return (
-            <Button onClick={() => setReminderFormOpen(true)} size={isMobile ? 'icon' : 'default'}>
-                <PlusCircle />
-                <span className="sr-only sm:not-sr-only sm:ml-2">New Reminder</span>
-            </Button>
-        );
-      case '/documents':
-         return (
-            <Button>
-                <Upload />
-                <span className="sr-only sm:not-sr-only sm:ml-2">Upload File</span>
-            </Button>
-        );
-      default:
-        return null;
+  const handleFabClick = () => {
+    if (pathname.startsWith('/budget')) setAddTransactionOpen(true);
+    else if (pathname.startsWith('/notes')) setNoteFormOpen(true);
+    else if (pathname.startsWith('/reminders')) setReminderFormOpen(true);
+    else if (pathname.startsWith('/documents')) {
+      // Future: Handle document upload
+    } else {
+        setAddTransactionOpen(true);
     }
+  };
+  
+  const getFabTooltip = () => {
+    if (pathname.startsWith('/budget')) return "Add Transaction";
+    if (pathname.startsWith('/notes')) return "New Note";
+    if (pathname.startsWith('/reminders')) return "New Reminder";
+    if (pathname.startsWith('/documents')) return "Upload File";
+    return "Add Transaction"
   };
 
   const renderPageContent = () => {
-    if (pathname === '/notes') {
-      return <NotesPage isFormOpen={isNoteFormOpen} onFormOpenChange={setNoteFormOpen} onNoteCreate={handleCreateNote} />;
+    switch (pathname) {
+        case '/': return <DashboardPage />;
+        case '/budget': return <BudgetPage />;
+        case '/notes': return <NotesPage isFormOpen={isNoteFormOpen} onFormOpenChange={setNoteFormOpen} onNoteCreate={() => setNoteFormOpen(true)} />;
+        case '/reminders': return <RemindersPage isFormOpen={isReminderFormOpen} onFormOpenChange={setReminderFormOpen} />;
+        case '/documents': return <DocumentsPage />;
+        default: return children;
     }
-    if (pathname === '/reminders') {
-        return <RemindersPage isFormOpen={isReminderFormOpen} onFormOpenChange={setReminderFormOpen} />
-    }
-    return children;
-  }
-
+  };
+  
+  const filteredNavItems = navItems.filter(item => {
+    if (isMobile) return item.href !== '/'; // Hide Dashboard on mobile nav
+    return true;
+  });
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen bg-background">
-        <Sidebar>
-          <SidebarHeader className="p-4 flex items-center gap-2">
-            <SidebarTrigger className="h-7 w-7" />
-            <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarFallback className="bg-primary text-primary-foreground font-bold text-lg">PA</AvatarFallback>
-              </Avatar>
-              <span className="text-xl font-semibold">Productivity Assistant</span>
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname === '/'}>
-                  <Link href="/">
-                    <LayoutDashboard />
-                    Budget
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname === '/reminders'}>
-                  <Link href="/reminders">
-                    <Bell />
-                    Reminders
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname === '/notes'}>
-                  <Link href="/notes">
-                    <StickyNote />
-                    Notes
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname === '/documents'}>
-                  <Link href="/documents">
-                    <FolderArchive />
-                    Documents
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarContent>
-          <SidebarFooter className="p-4">
-             {/* Footer can be used for other things if needed */}
-          </SidebarFooter>
-        </Sidebar>
+    <div className="flex flex-col h-screen bg-background">
+      <header className="flex items-center justify-between h-16 px-4 border-b shrink-0 md:hidden">
+        <Link href="/" className="text-xl font-bold text-primary">
+          ClarityBudgets
+        </Link>
+      </header>
 
-        <SidebarInset>
-          <header className="flex items-center justify-between h-16 px-4 border-b shrink-0">
-             <SidebarTrigger className="block md:hidden" />
-            <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold md:text-xl">
-                    {pathname === '/' && 'Budget'}
-                    {pathname === '/reminders' && 'Reminders'}
-                    {pathname === '/notes' && 'Notes'}
-                    {pathname === '/documents' && 'Documents'}
-                </h1>
-            </div>
-            <div className="flex items-center gap-4 ml-auto">
-               {getHeaderActions()}
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Settings className="w-5 h-5" />
-                    <span className="sr-only">Settings</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                    <SheetHeader>
-                        <SheetTitle>App Info</SheetTitle>
-                    </SheetHeader>
-                    <div className="py-4 text-sm text-muted-foreground">
-                        <p>Productivity Assistant v1.0</p>
-                        <p>A simple app to track your finances, notes, and reminders.</p>
-                    </div>
-                </SheetContent>
-              </Sheet>
-              <Avatar>
-                <AvatarImage src="https://picsum.photos/100" alt="User" data-ai-hint="person avatar" />
-                <AvatarFallback>CB</AvatarFallback>
-              </Avatar>
-            </div>
-          </header>
-          <main className="flex-1 p-4 overflow-auto lg:p-6">
-            {renderPageContent()}
-          </main>
-        </SidebarInset>
-      </div>
+      <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">
+        {renderPageContent()}
+      </main>
+
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-10 border-t bg-background/95 backdrop-blur-sm md:relative md:border-none">
+        <div className="flex h-16 items-center justify-around max-w-lg mx-auto">
+          {filteredNavItems.map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                'flex flex-col items-center gap-1 p-2 rounded-md text-muted-foreground transition-colors hover:text-primary',
+                pathname === item.href && 'text-primary'
+              )}
+            >
+              <item.icon className="w-6 h-6" />
+              <span className="text-xs font-medium">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+        {/* FAB */}
+        <div className="fixed bottom-20 right-6 z-20">
+             <Button
+                isFloating
+                title={getFabTooltip()}
+                onClick={handleFabClick}
+                className="rounded-full shadow-lg"
+            >
+                <Plus className="w-6 h-6" />
+            </Button>
+        </div>
+
+
       <AddTransactionDialog open={isAddTransactionOpen} onOpenChange={setAddTransactionOpen} />
-    </SidebarProvider>
+    </div>
   );
 }

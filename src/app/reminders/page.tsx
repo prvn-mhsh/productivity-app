@@ -16,6 +16,8 @@ import { CalendarIcon, BellRing } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 
 const reminderSchema = z.object({
@@ -35,6 +37,7 @@ interface RemindersPageProps {
 function RemindersPage({ isFormOpen, onFormOpenChange }: RemindersPageProps) {
   const { reminders, addReminder, loading } = useBudgetData();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const form = useForm<ReminderFormValues>({
     resolver: zodResolver(reminderSchema),
@@ -55,45 +58,52 @@ function RemindersPage({ isFormOpen, onFormOpenChange }: RemindersPageProps) {
     form.reset();
     onFormOpenChange(false);
   };
+  
+  const ReminderList = () => (
+     <Card className='h-full'>
+      <CardHeader>
+        <CardTitle>Upcoming Reminders</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {loading ? (
+            <p>Loading...</p>
+        ) : reminders.length > 0 ? (
+          <ul className="space-y-4">
+            {reminders.map((reminder) => (
+              <li key={reminder.id} className="flex items-center p-3 bg-secondary rounded-lg">
+                <BellRing className="w-5 h-5 mr-4 text-primary" />
+                <div className="flex-1">
+                  <p className="font-semibold">{reminder.title}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {format(new Date(reminder.eventTime), "PPP, h:mm a")}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+            <div className="text-center text-muted-foreground py-10 h-full flex flex-col items-center justify-center">
+                <BellRing className="mx-auto h-12 w-12" />
+                <p className="mt-4 font-semibold">No upcoming reminders.</p>
+                <p>Click the '+' button to get started.</p>
+            </div>
+        )}
+      </CardContent>
+    </Card>
+  )
 
   return (
-    <div className="flex flex-col gap-6">
-       <div>
-        <h1 className="text-3xl font-bold">Reminders</h1>
-        <p className="text-muted-foreground">Schedule alerts for your tasks and events.</p>
-      </div>
-      
-        <Card>
-          <CardHeader>
-            <CardTitle>Upcoming Reminders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-                <p>Loading...</p>
-            ) : reminders.length > 0 ? (
-              <ul className="space-y-4">
-                {reminders.map((reminder) => (
-                  <li key={reminder.id} className="flex items-center p-3 bg-secondary rounded-lg">
-                    <BellRing className="w-5 h-5 mr-4 text-primary" />
-                    <div className="flex-1">
-                      <p className="font-semibold">{reminder.title}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {format(new Date(reminder.eventTime), "PPP, h:mm a")}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-                <div className="text-center text-muted-foreground py-10">
-                    <BellRing className="mx-auto h-12 w-12" />
-                    <p className="mt-4 font-semibold">No upcoming reminders.</p>
-                    <p>Click "New Reminder" to get started.</p>
-                </div>
-            )}
-          </CardContent>
-        </Card>
-
+    <div className="flex flex-col gap-6 h-full">
+        {isMobile ? (
+          <ScrollArea className="h-full">
+            <div className="p-1">
+                <ReminderList />
+            </div>
+          </ScrollArea>
+        ) : (
+          <ReminderList />
+        )}
+        
         <Dialog open={isFormOpen} onOpenChange={onFormOpenChange}>
             <DialogContent>
                 <DialogHeader>

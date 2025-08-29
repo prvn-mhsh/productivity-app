@@ -26,6 +26,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Edit, Trash2, StickyNote } from 'lucide-react';
 import type { Note } from '@/lib/types';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const noteSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -45,6 +47,7 @@ function NotesPage({ isFormOpen, onFormOpenChange, onNoteCreate }: NotesPageProp
   const { notes, addNote, updateNote, deleteNote, loading } = useBudgetData();
   const { toast } = useToast();
   const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const isMobile = useIsMobile();
 
   const form = useForm<NoteFormValues>({
     resolver: zodResolver(noteSchema),
@@ -84,27 +87,20 @@ function NotesPage({ isFormOpen, onFormOpenChange, onNoteCreate }: NotesPageProp
     deleteNote(noteId);
     toast({ title: 'Note Deleted', description: 'Your note has been deleted.' });
   }
-
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Notes</h1>
-          <p className="text-muted-foreground">Create, edit, and delete short textual notes.</p>
-        </div>
-      </div>
-
-      {loading ? (
+  
+  const NoteList = () => (
+    <>
+    {loading ? (
         <p>Loading...</p>
       ) : notes.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {notes.map((note) => (
-            <Card key={note.id}>
+            <Card key={note.id} className='flex flex-col'>
               <CardHeader>
-                <CardTitle>{note.title}</CardTitle>
+                <CardTitle className='truncate'>{note.title}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground whitespace-pre-wrap">{note.content}</p>
+              <CardContent className='flex-grow'>
+                <p className="text-muted-foreground whitespace-pre-wrap line-clamp-4">{note.content}</p>
                 <div className="mt-4 flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => handleOpenForm(note)}>
                     <Edit className="mr-1 h-4 w-4" /> Edit
@@ -134,11 +130,25 @@ function NotesPage({ isFormOpen, onFormOpenChange, onNoteCreate }: NotesPageProp
           ))}
         </div>
       ) : (
-        <div className="text-center text-muted-foreground py-20">
+        <div className="text-center text-muted-foreground py-20 flex flex-col items-center justify-center h-full">
           <StickyNote className="mx-auto h-12 w-12" />
           <p className="mt-4 font-semibold">No notes yet.</p>
-          <p>Click "Create Note" to get started.</p>
+          <p>Click the '+' button to get started.</p>
         </div>
+      )}
+    </>
+  )
+
+  return (
+    <div className="flex flex-col gap-6 h-full">
+      {isMobile ? (
+         <ScrollArea className="h-full">
+            <div className="p-1">
+             <NoteList />
+            </div>
+        </ScrollArea>
+      ) : (
+        <NoteList />
       )}
 
       <Dialog open={isFormOpen} onOpenChange={handleCloseForm}>
