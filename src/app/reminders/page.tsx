@@ -86,8 +86,9 @@ function RemindersPage({ isFormOpen, onFormOpenChange }: RemindersPageProps) {
               </ul>
             ) : (
                 <div className="text-center text-muted-foreground py-10">
-                    <p>No upcoming reminders.</p>
-                    <p>Add a new reminder to get started.</p>
+                    <BellRing className="mx-auto h-12 w-12" />
+                    <p className="mt-4 font-semibold">No upcoming reminders.</p>
+                    <p>Click "New Reminder" to get started.</p>
                 </div>
             )}
           </CardContent>

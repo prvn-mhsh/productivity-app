@@ -8,12 +8,13 @@ import { UNCATEGORIZED_ID } from '@/lib/constants';
 
 interface AppDataContextType {
   transactions: Transaction[];
-  budgetGoals: BudgetGoal[];
+  totalBudget: number;
   reminders: Reminder[];
   notes: Note[];
   loading: boolean;
   addTransaction: (transaction: Omit<Transaction, 'id' | 'date'>) => void;
-  setBudgetGoal: (goal: BudgetGoal) => void;
+  deleteTransaction: (transactionId: string) => void;
+  setTotalBudget: (amount: number) => void;
   addReminder: (reminder: Omit<Reminder, 'id'>) => void;
   addNote: (note: Omit<Note, 'id'>) => void;
   updateNote: (note: Note) => void;
@@ -26,7 +27,7 @@ const isServer = typeof window === 'undefined';
 
 export function BudgetProvider({ children }: { children: React.ReactNode }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [budgetGoals, setBudgetGoals] = useState<BudgetGoal[]>([]);
+  const [totalBudget, setTotalBudget] = useState<number>(0);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,14 +36,14 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     if (isServer) return;
     try {
       const storedTransactions = localStorage.getItem('transactions');
-      const storedBudgets = localStorage.getItem('budgetGoals');
+      const storedTotalBudget = localStorage.getItem('totalBudget');
       const storedReminders = localStorage.getItem('reminders');
       const storedNotes = localStorage.getItem('notes');
       if (storedTransactions) {
         setTransactions(JSON.parse(storedTransactions));
       }
-      if (storedBudgets) {
-        setBudgetGoals(JSON.parse(storedBudgets));
+      if (storedTotalBudget) {
+        setTotalBudget(JSON.parse(storedTotalBudget));
       }
       if (storedReminders) {
         setReminders(JSON.parse(storedReminders));
@@ -69,11 +70,11 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (loading) return;
     try {
-      localStorage.setItem('budgetGoals', JSON.stringify(budgetGoals));
+      localStorage.setItem('totalBudget', JSON.stringify(totalBudget));
     } catch (error) {
-      console.error('Failed to save budget goals to localStorage', error);
+      console.error('Failed to save total budget to localStorage', error);
     }
-  }, [budgetGoals, loading]);
+  }, [totalBudget, loading]);
 
   useEffect(() => {
     if (loading) return;
@@ -102,18 +103,11 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     };
     setTransactions(prev => [newTransaction, ...prev]);
   };
-
-  const setBudgetGoal = (goal: BudgetGoal) => {
-    setBudgetGoals(prev => {
-      const existingIndex = prev.findIndex(g => g.categoryId === goal.categoryId);
-      if (existingIndex > -1) {
-        const updatedGoals = [...prev];
-        updatedGoals[existingIndex] = goal;
-        return updatedGoals;
-      }
-      return [...prev, goal];
-    });
+  
+  const deleteTransaction = (transactionId: string) => {
+    setTransactions(prev => prev.filter(t => t.id !== transactionId));
   };
+
 
   const addReminder = (reminder: Omit<Reminder, 'id'>) => {
     const newReminder: Reminder = {
@@ -141,17 +135,18 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(() => ({
     transactions,
-    budgetGoals,
+    totalBudget,
     reminders,
     notes,
     loading,
     addTransaction,
-    setBudgetGoal,
+    deleteTransaction,
+    setTotalBudget,
     addReminder,
     addNote,
     updateNote,
     deleteNote,
-  }), [transactions, budgetGoals, reminders, notes, loading]);
+  }), [transactions, totalBudget, reminders, notes, loading]);
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;
 }

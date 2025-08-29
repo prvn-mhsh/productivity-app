@@ -30,7 +30,6 @@ import { usePathname } from 'next/navigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 import NotesPage from '@/app/notes/page';
 import RemindersPage from '@/app/reminders/page';
-import { BudgetSettings } from '../budget-settings';
 
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -147,6 +146,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <SidebarInset>
           <header className="flex items-center justify-between h-16 px-4 border-b shrink-0">
+             <SidebarTrigger className="block md:hidden" />
             <div className="flex items-center gap-2">
                 <h1 className="text-lg font-semibold md:text-xl">
                     {pathname === '/' && 'Budget'}
@@ -166,10 +166,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </SheetTrigger>
                 <SheetContent>
                     <SheetHeader>
-                        <SheetTitle>Settings</SheetTitle>
+                        <SheetTitle>App Info</SheetTitle>
                     </SheetHeader>
-                    <div className="py-4">
-                        <BudgetSettings />
+                    <div className="py-4 text-sm text-muted-foreground">
+                        <p>Productivity Assistant v1.0</p>
+                        <p>A simple app to track your finances, notes, and reminders.</p>
                     </div>
                 </SheetContent>
               </Sheet>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +17,7 @@ interface InsightsCardProps {
 
 export function InsightsCard({ title, value, icon: Icon, isCurrency = false, trend }: InsightsCardProps) {
   const formattedValue = isCurrency
-    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
+    ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value)
     : value.toLocaleString();
 
   return (
