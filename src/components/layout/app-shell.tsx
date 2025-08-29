@@ -30,6 +30,7 @@ import { usePathname } from 'next/navigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 import NotesPage from '@/app/notes/page';
 import RemindersPage from '@/app/reminders/page';
+import { BudgetSettings } from '../budget-settings';
 
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -94,7 +95,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <div className="flex min-h-screen bg-background">
         <Sidebar>
-          <SidebarHeader className="p-4">
+          <SidebarHeader className="p-4 flex items-center gap-2">
+            <SidebarTrigger className="h-7 w-7" />
             <div className="flex items-center gap-3">
               <Avatar>
                 <AvatarFallback className="bg-primary text-primary-foreground font-bold text-lg">PA</AvatarFallback>
@@ -146,7 +148,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SidebarInset>
           <header className="flex items-center justify-between h-16 px-4 border-b shrink-0">
             <div className="flex items-center gap-2">
-                <SidebarTrigger className="flex"/>
                 <h1 className="text-lg font-semibold md:text-xl">
                     {pathname === '/' && 'Budget'}
                     {pathname === '/reminders' && 'Reminders'}
@@ -168,7 +169,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         <SheetTitle>Settings</SheetTitle>
                     </SheetHeader>
                     <div className="py-4">
-                        Settings content goes here.
+                        <BudgetSettings />
                     </div>
                 </SheetContent>
               </Sheet>
