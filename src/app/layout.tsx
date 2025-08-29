@@ -1,9 +1,11 @@
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { AppShell } from '@/components/layout/app-shell';
 import { BudgetProvider } from '@/hooks/use-budget-data';
+import { AuthProvider } from '@/context/auth-context';
+import { AppShell } from '@/components/layout/app-shell';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full`}>
       <body className="font-sans antialiased h-full">
-        <BudgetProvider>
-          <AppShell>{children}</AppShell>
-        </BudgetProvider>
+        <AuthProvider>
+          <BudgetProvider>
+            {children}
+          </BudgetProvider>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>

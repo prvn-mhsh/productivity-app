@@ -13,6 +13,7 @@ import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { Button } from '@/components/ui/button';
 import { BudgetSettingsDialog } from '@/components/budget-settings';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { AppShell } from '@/components/layout/app-shell';
 
 export default function BudgetPage() {
   const { transactions, totalBudget, loading } = useBudgetData();
@@ -46,9 +47,8 @@ export default function BudgetPage() {
     return { totalSpent, remainingBudget, spendingByCategory, recentTransactions };
   }, [transactions, totalBudget]);
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
+  const pageContent = (
+     <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Skeleton className="h-32" />
             <Skeleton className="h-32" />
@@ -60,10 +60,14 @@ export default function BudgetPage() {
         </div>
         <Skeleton className="h-[300px]" />
       </div>
-    );
+  )
+
+  if (loading) {
+    return <AppShell>{pageContent}</AppShell>
   }
 
   return (
+    <AppShell>
     <>
     <ScrollArea className="h-full">
       <div className="flex flex-col gap-6 p-1">
@@ -104,5 +108,6 @@ export default function BudgetPage() {
     </ScrollArea>
       <BudgetSettingsDialog open={isBudgetDialogOpen} onOpenChange={setBudgetDialogOpen} />
     </>
+    </AppShell>
   );
 }

@@ -28,6 +28,7 @@ import { Edit, Trash2, StickyNote } from 'lucide-react';
 import type { Note } from '@/lib/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { AppShell } from '@/components/layout/app-shell';
 
 const noteSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -37,13 +38,13 @@ const noteSchema = z.object({
 type NoteFormValues = z.infer<typeof noteSchema>;
 
 interface NotesPageProps {
-  isFormOpen: boolean;
-  onFormOpenChange: (open: boolean) => void;
-  onNoteCreate: () => void;
+  isFormOpen?: boolean;
+  onFormOpenChange?: (open: boolean) => void;
+  onNoteCreate?: () => void;
 }
 
 
-function NotesPage({ isFormOpen, onFormOpenChange, onNoteCreate }: NotesPageProps) {
+function NotesPage({ isFormOpen = false, onFormOpenChange = () => {}, onNoteCreate = () => {} }: NotesPageProps) {
   const { notes, addNote, updateNote, deleteNote, loading } = useBudgetData();
   const { toast } = useToast();
   const [editingNote, setEditingNote] = useState<Note | null>(null);
@@ -139,7 +140,7 @@ function NotesPage({ isFormOpen, onFormOpenChange, onNoteCreate }: NotesPageProp
     </>
   )
 
-  return (
+  const PageContent = (
     <div className="flex flex-col gap-6 h-full">
       {isMobile ? (
          <ScrollArea className="h-full">
@@ -195,7 +196,9 @@ function NotesPage({ isFormOpen, onFormOpenChange, onNoteCreate }: NotesPageProp
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
+
+  return <AppShell>{PageContent}</AppShell>
 }
 
 export default NotesPage;

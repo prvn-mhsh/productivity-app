@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { AppShell } from '@/components/layout/app-shell';
 
 
 const reminderSchema = z.object({
@@ -30,11 +31,11 @@ const reminderSchema = z.object({
 type ReminderFormValues = z.infer<typeof reminderSchema>;
 
 interface RemindersPageProps {
-    isFormOpen: boolean;
-    onFormOpenChange: (open: boolean) => void;
+    isFormOpen?: boolean;
+    onFormOpenChange?: (open: boolean) => void;
 }
 
-function RemindersPage({ isFormOpen, onFormOpenChange }: RemindersPageProps) {
+function RemindersPage({ isFormOpen = false, onFormOpenChange = () => {} }: RemindersPageProps) {
   const { reminders, addReminder, loading } = useBudgetData();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -92,7 +93,7 @@ function RemindersPage({ isFormOpen, onFormOpenChange }: RemindersPageProps) {
     </Card>
   )
 
-  return (
+  const pageContent = (
     <div className="flex flex-col gap-6 h-full">
         {isMobile ? (
           <ScrollArea className="h-full">
@@ -176,7 +177,9 @@ function RemindersPage({ isFormOpen, onFormOpenChange }: RemindersPageProps) {
             </DialogContent>
         </Dialog>
     </div>
-  );
+  )
+
+  return <AppShell>{pageContent}</AppShell>
 }
 
 export default RemindersPage;
